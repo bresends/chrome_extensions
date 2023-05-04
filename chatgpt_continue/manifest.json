@@ -1,0 +1,14 @@
+{
+    "manifest_version": 3,
+    "name": "Continue GPT",
+    "version": "1.0",
+    "description": "Adds a button to the ChatGPT so it continues",
+    "permissions": ["activeTab"],
+    "host_permissions": ["https://chat.openai.com/*"],
+    "content_scripts": [
+      {
+        "matches": ["*://chat.openai.com/*", "*://*.chat.openai.com/*"],
+        "js": ["contentScript.js"]
+      }
+    ]
+  }
