@@ -1,0 +1,30 @@
+.continue-button {
+    padding: 2px;
+    border: none;
+    border-radius: 20px;
+    color: #fff;
+    background-color: #6e6e80;
+    font-size: 10px;
+    font-weight: 150;
+    margin-bottom: 0.25rem;
+    width: 80px;
+    animation: fade-in 0.5s ease-in-out forwards;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
