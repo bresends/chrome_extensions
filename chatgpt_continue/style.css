@@ -16,6 +16,20 @@
     z-index: 2;
 }
 
+.dropdown {
+    overflow-y: scroll;
+    max-height: 300px;
+    width: 132px;
+    bottom: 40px;
+    left: 0;
+    z-index: 200;
+    overflow-y: scroll;
+    width: 132px;
+    bottom: 40px;
+    left: 0;
+    z-index: 200;
+}
+
 @keyframes fade-in {
     from {
         opacity: 0;

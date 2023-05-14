@@ -59,6 +59,59 @@ function createDropdownBtn() {
     return continueButtonDropdown;
 }
 
+function createDropdown() {
+    const dropdown = document.createElement('ul');
+    dropdown.id = 'continue-conversation-dropdown-list';
+    dropdown.classList =
+        'dropdown hidden absolute z-10 overflow-auto rounded-sm text-base ring-1 ring-opacity-5 focus:outline-none bg-white dark:bg-gray-800 dark:ring-white/20 dark:last:border-0 sm:text-sm';
+
+    dropdown.setAttribute('role', 'menu');
+    dropdown.setAttribute('aria-orientation', 'vertical');
+    dropdown.setAttribute(
+        'aria-labelledby',
+        'continue-conversation-dropdown-button'
+    );
+    dropdown.setAttribute('tabindex', '-1');
+
+    const dropdownItem1 = createDropdownOption('continue', 'Continue');
+    const dropdownItem2 = createDropdownOption('Test', 'Test');
+
+    dropdown.appendChild(dropdownItem1);
+    dropdown.appendChild(dropdownItem2);
+
+    return dropdown;
+}
+
+function createDropdownOption(title, innerText) {
+    const dropdownItem = document.createElement('li');
+
+    dropdownItem.id = `continue-conversation-dropdown-item-${title}`;
+    dropdownItem.dir = 'auto';
+    dropdownItem.classList =
+        'text-gray-900 relative cursor-pointer select-none border-b p-2 last:border-0 border-gray-100 dark:border-white/20 hover:bg-gray-600';
+
+    const dropdownOption = document.createElement('span');
+    dropdownOption.classList =
+        'font-semibold flex h-6 items-center gap-1 truncate text-gray-800 dark:text-gray-100';
+
+    dropdownOption.title = title;
+    dropdownOption.innerText = innerText;
+
+    dropdownItem.appendChild(dropdownOption);
+    dropdownItem.setAttribute('role', 'option');
+    dropdownItem.setAttribute('tabindex', '-1');
+
+    dropdownItem.addEventListener('mousemove', () => {
+        dropdownItem.classList.add('bg-gray-600');
+    });
+
+    dropdownItem.addEventListener('mouseleave', () => {
+        dropdownItem.classList.remove('bg-gray-600');
+    });
+
+    return dropdownItem;
+}
+
 function createContinueBtn() {
     const continueButton = document.createElement('button');
     continueButton.textContent = 'Continue';
@@ -104,12 +157,10 @@ function insertElementsToDom() {
     nodeBeforetTextAreaElement.style.minHeight = '38px';
 
     const continueButtonWrapper = createBtnContainer();
-    const continueButtonDropdown = createDropdownBtn();
-    const continueButton = createContinueBtn();
 
-    continueButtonWrapper.appendChild(continueButtonDropdown);
-    // continueButtonWrapper.appendChild(promptDropdown());
-    continueButtonWrapper.appendChild(continueButton);
+    continueButtonWrapper.appendChild(createDropdownBtn());
+    continueButtonWrapper.appendChild(createDropdown());
+    continueButtonWrapper.appendChild(createContinueBtn());
 
     nodeBeforetTextAreaElement.appendChild(continueButtonWrapper);
 }
@@ -126,7 +177,8 @@ window.onload = () => {
             .querySelector("textarea[tabindex='0']")
             .parentNode.previousSibling.querySelector('button[as="button"]');
 
-        if (!responseButtonExists) continueButtonWrapper.remove();
+        if (!responseButtonExists && continueButtonWrapper)
+            continueButtonWrapper.remove();
 
         if (responseButtonExists && !continueButtonWrapper) {
             insertElementsToDom();
