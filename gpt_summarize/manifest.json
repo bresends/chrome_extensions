@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3,
+    "name": "ChatGPT Summarizer",
+    "version": "1.0",
+    "description": "A Chrome extension that allows you to upload large files in chunks.",
+    "content_scripts": [
+        {
+            "js": ["content.js"],
+            "matches": ["*://chat.openai.com/*", "*://*.chat.openai.com/*"]
+        }
+    ],
+    "icons": {
+        "128": "icon128.png",
+        "16": "icon16.png",
+        "48": "icon48.png"
+    },
+    "host_permissions": ["https://chat.openai.com/*"],
+    "permissions": ["activeTab"]
+}
