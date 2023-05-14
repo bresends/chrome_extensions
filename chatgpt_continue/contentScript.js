@@ -79,6 +79,19 @@ function createDropdown() {
     dropdown.appendChild(dropdownItem1);
     dropdown.appendChild(dropdownItem2);
 
+    document.addEventListener('click', (e) => {
+        const continueConversationDropdown = document.querySelector(
+            '#continue-conversation-dropdown-list'
+        );
+        const cl = continueConversationDropdown?.classList;
+        if (
+            cl?.contains('block') &&
+            !e.target.closest('#continue-conversation-dropdown-button')
+        ) {
+            continueConversationDropdown.classList.replace('block', 'hidden');
+        }
+    });
+
     return dropdown;
 }
 
@@ -175,7 +188,8 @@ window.onload = () => {
 
         const responseButtonExists = document
             .querySelector("textarea[tabindex='0']")
-            .parentNode.previousSibling.querySelector('button[as="button"]');
+            .parentNode.previousSibling.querySelector('button[as="button"]')
+            ?.textContent.includes('Regenerate response');
 
         if (!responseButtonExists && continueButtonWrapper)
             continueButtonWrapper.remove();

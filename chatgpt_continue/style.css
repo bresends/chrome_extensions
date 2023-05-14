@@ -18,16 +18,14 @@
 
 .dropdown {
     overflow-y: scroll;
-    max-height: 300px;
     width: 132px;
-    bottom: 40px;
+    bottom: 2.75rem;
     left: 0;
     z-index: 200;
     overflow-y: scroll;
-    width: 132px;
-    bottom: 40px;
     left: 0;
     z-index: 200;
+    animation: fade-in 0.2s ease-in-out forwards;
 }
 
 @keyframes fade-in {
