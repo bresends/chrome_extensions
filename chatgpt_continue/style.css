@@ -1,14 +1,19 @@
-.continue-button {
-    padding: 2px;
-    border: none;
-    border-radius: 20px;
-    color: #fff;
-    background-color: #6e6e80;
-    font-size: 10px;
-    font-weight: 150;
-    margin-bottom: 0.25rem;
-    width: 80px;
+.animate-fade {
     animation: fade-in 0.5s ease-in-out forwards;
+}
+
+.continue-button-wrapper {
+    position: absolute;
+    left: 0;
+    display: flex;
+    z-index: 200;
+}
+
+.continue-conversation-dropdown-button {
+    width: 38px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    z-index: 2;
 }
 
 @keyframes fade-in {
