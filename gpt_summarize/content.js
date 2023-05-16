@@ -85,7 +85,7 @@ function initializeExtension() {
     };
 
     const fileInput = createFileInput(handleFileChange);
-    
+
     const submitButton = createElement('button', {
         innerText: 'Submit File',
         className: 'submit-button',
@@ -97,20 +97,35 @@ function initializeExtension() {
 
     const targetContainerSelector =
         '.flex.flex-col.w-full.py-2.flex-grow.md\\:py-3.md\\:pl-4';
-    const intervalId = setInterval(() => {
-        const targetElement = document.querySelector(targetContainerSelector);
-        if (targetElement && !targetElement.contains(submitButton)) {
-            targetElement.parentNode.insertBefore(submitButton, targetElement);
-            targetElement.parentNode.insertBefore(
-                progressContainer,
-                targetElement
-            );
-            targetElement.parentNode.insertBefore(
-                chunkSizeLabel,
-                targetElement
-            );
+
+    const observerCallback = (mutationsList) => {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                const gptTextBox = document.querySelector(
+                    targetContainerSelector
+                );
+                const existingSubmitButton =
+                    gptTextBox?.parentNode?.querySelector('.submit-button');
+                if (gptTextBox && !existingSubmitButton) {
+                    gptTextBox.parentNode.insertBefore(
+                        submitButton,
+                        gptTextBox
+                    );
+                    gptTextBox.parentNode.insertBefore(
+                        progressContainer,
+                        gptTextBox
+                    );
+                    gptTextBox.parentNode.insertBefore(
+                        chunkSizeLabel,
+                        gptTextBox
+                    );
+                }
+            }
         }
-    }, 2000);
+    };
+
+    const observer = new MutationObserver(observerCallback);
+    observer.observe(document.body, { childList: true, subtree: true });
 }
 
 // Initialize the extension

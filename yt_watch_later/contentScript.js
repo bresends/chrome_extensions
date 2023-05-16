@@ -30,7 +30,7 @@ function addButtonToVideos() {
   window.onload = () => {
     const targetNode = document.body;
   
-    const config = { attributes: true, childLIst: true, subtree: true };
+    const config = { attributes: true, childList: true, subtree: true };
   
     const observer = new MutationObserver(() => {
       const videoItems = document.querySelectorAll('ytd-playlist-video-renderer');
