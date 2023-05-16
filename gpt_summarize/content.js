@@ -95,36 +95,25 @@ function initializeExtension() {
         fileInput.click();
     });
 
-    const targetContainerSelector =
-        '.flex.flex-col.w-full.py-2.flex-grow.md\\:py-3.md\\:pl-4';
-
-    const observerCallback = (mutationsList) => {
+    const observer = new MutationObserver((mutationsList) => {
         for (const mutation of mutationsList) {
-            if (mutation.type === 'childList') {
-                const gptTextBox = document.querySelector(
-                    targetContainerSelector
+            if (mutation.type !== 'childList') return;
+
+            const gptTextBox = document.querySelector(
+                '.flex.flex-col.w-full.py-2.flex-grow.md\\:py-3.md\\:pl-4'
+            );
+            const existingSubmitButton =
+                gptTextBox?.parentNode?.querySelector('.submit-button');
+            if (gptTextBox && !existingSubmitButton) {
+                gptTextBox.parentNode.insertBefore(submitButton, gptTextBox);
+                gptTextBox.parentNode.insertBefore(
+                    progressContainer,
+                    gptTextBox
                 );
-                const existingSubmitButton =
-                    gptTextBox?.parentNode?.querySelector('.submit-button');
-                if (gptTextBox && !existingSubmitButton) {
-                    gptTextBox.parentNode.insertBefore(
-                        submitButton,
-                        gptTextBox
-                    );
-                    gptTextBox.parentNode.insertBefore(
-                        progressContainer,
-                        gptTextBox
-                    );
-                    gptTextBox.parentNode.insertBefore(
-                        chunkSizeLabel,
-                        gptTextBox
-                    );
-                }
+                gptTextBox.parentNode.insertBefore(chunkSizeLabel, gptTextBox);
             }
         }
-    };
-
-    const observer = new MutationObserver(observerCallback);
+    });
     observer.observe(document.body, { childList: true, subtree: true });
 }
 
