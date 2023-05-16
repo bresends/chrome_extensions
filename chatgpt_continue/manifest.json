@@ -8,8 +8,7 @@
     "content_scripts": [
         {
             "matches": ["*://chat.openai.com/*", "*://*.chat.openai.com/*"],
-            "js": ["contentScript.js"],
-            "css": ["style.css"]
+            "js": ["contentScript.js"]
         }
     ]
 }

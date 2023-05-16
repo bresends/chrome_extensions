@@ -1,46 +1,37 @@
-// Create the button
-const button = document.createElement('button');
-button.innerText = 'Submit File';
-button.style.backgroundColor = 'green';
-button.style.color = 'white';
-button.style.padding = '3px';
-button.style.border = 'none';
-button.style.borderRadius = '3px';
-button.style.margin = '3px';
+function createElement(tag, attributes = {}) {
+    const element = document.createElement(tag);
+    Object.entries(attributes).forEach(([key, value]) => {
+        element[key] = value;
+    });
+    return element;
+}
 
-// Create the progress bar container
-const progressContainer = document.createElement('div');
-progressContainer.style.width = '99%';
-progressContainer.style.height = '5px';
-progressContainer.style.backgroundColor = 'grey';
-progressContainer.style.margin = '3px';
-progressContainer.style.borderRadius = '5px';
+const button = createElement('button', {
+    innerText: 'Submit File',
+    className: 'submit-button',
+});
 
-// Create the progress bar element
-const progressBar = document.createElement('div');
-progressBar.style.width = '0%';
-progressBar.style.height = '100%';
-progressBar.style.backgroundColor = '#32a9db';
+const progressContainer = createElement('div', {
+    className: 'progress-container',
+});
+
+const progressBar = createElement('div', {
+    className: 'progress-bar',
+});
 progressContainer.appendChild(progressBar);
 
-// Create the chunk size input
-const chunkSizeInput = document.createElement('input');
-chunkSizeInput.type = 'number';
-chunkSizeInput.min = '1';
-chunkSizeInput.value = '12000';
-chunkSizeInput.style.margin = '3px';
-chunkSizeInput.style.margin = '3px';
-chunkSizeInput.style.width = '80px'; // Set the width of the input element
-chunkSizeInput.style.height = '28px'; // Set the width of the input element
-chunkSizeInput.style.color = 'black'; // Set the font color inside the input element
-chunkSizeInput.style.fontSize = '14px'; // Set the font size inside the input element
-// Create the chunk size label
-const chunkSizeLabel = document.createElement('label');
-chunkSizeLabel.innerText = 'Chunk Size: ';
-chunkSizeLabel.appendChild(chunkSizeInput);
-chunkSizeLabel.style.color = 'white'; // Set the font color of the label text
+const chunkSizeInput = createElement('input', {
+    type: 'number',
+    min: '1',
+    value: '12000',
+    className: 'chunk-size-input',
+});
 
-//chunkSizeLabel.style.color = "black";
+const chunkSizeLabel = createElement('label', {
+    innerText: 'Chunk Size: ',
+    className: 'chunk-size-label',
+});
+
 chunkSizeLabel.appendChild(chunkSizeInput);
 
 // Add a click event listener to the button

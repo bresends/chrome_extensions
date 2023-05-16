@@ -1,0 +1,56 @@
+.animate-fade {
+    animation: fade-in 0.5s ease-in-out forwards;
+}
+
+.submit-button {
+    background-color: green;
+    color: white;
+    padding: 3px;
+    border: none;
+    border-radius: 3px;
+    margin: 3px;
+}
+
+.progress-container {
+    width: 99%;
+    height: 5px;
+    background-color: grey;
+    margin: 3px;
+    border-radius: 5px;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: #32a9db;
+}
+
+.chunk-size-input {
+    margin: 3px;
+    width: 80px;
+    height: 28px;
+    color: black;
+    font-size: 1rem;
+}
+
+.chunk-size-label {
+    color: white;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
