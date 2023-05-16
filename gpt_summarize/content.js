@@ -96,7 +96,7 @@ function initializeExtension() {
     });
 
     const observer = new MutationObserver((mutationsList) => {
-        for (const mutation of mutationsList) {
+        mutationsList.forEach((mutation) => {
             if (mutation.type !== 'childList') return;
 
             const gptTextBox = document.querySelector(
@@ -112,7 +112,7 @@ function initializeExtension() {
                 );
                 gptTextBox.parentNode.insertBefore(chunkSizeLabel, gptTextBox);
             }
-        }
+        });
     });
     observer.observe(document.body, { childList: true, subtree: true });
 }
