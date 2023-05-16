@@ -65,7 +65,7 @@ function initializeExtension() {
         progressBar.style.width = '0%';
         progressBar.style.backgroundColor = '#32a9db';
 
-        const file = input.files[0];
+        const file = fileInput.files[0];
         const text = await file.text();
 
         const chunkSize = parseInt(chunkSizeInput.value);
@@ -84,22 +84,23 @@ function initializeExtension() {
         progressBar.style.backgroundColor = '#32a9db';
     };
 
-    const input = createFileInput(handleFileChange);
-    const button = createElement('button', {
+    const fileInput = createFileInput(handleFileChange);
+    
+    const submitButton = createElement('button', {
         innerText: 'Submit File',
         className: 'submit-button',
     });
 
-    button.addEventListener('click', () => {
-        input.click();
+    submitButton.addEventListener('click', () => {
+        fileInput.click();
     });
 
     const targetContainerSelector =
         '.flex.flex-col.w-full.py-2.flex-grow.md\\:py-3.md\\:pl-4';
     const intervalId = setInterval(() => {
         const targetElement = document.querySelector(targetContainerSelector);
-        if (targetElement && !targetElement.contains(button)) {
-            targetElement.parentNode.insertBefore(button, targetElement);
+        if (targetElement && !targetElement.contains(submitButton)) {
+            targetElement.parentNode.insertBefore(submitButton, targetElement);
             targetElement.parentNode.insertBefore(
                 progressContainer,
                 targetElement
