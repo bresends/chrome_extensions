@@ -27,7 +27,7 @@ progressContainer.appendChild(progressBar);
 const chunkSizeInput = document.createElement('input');
 chunkSizeInput.type = 'number';
 chunkSizeInput.min = '1';
-chunkSizeInput.value = '15000';
+chunkSizeInput.value = '12000';
 chunkSizeInput.style.margin = '3px';
 chunkSizeInput.style.margin = '3px';
 chunkSizeInput.style.width = '80px'; // Set the width of the input element
@@ -100,7 +100,7 @@ async function submitConversation(text, part, filename) {
         cancelable: true,
         keyCode: 13,
     });
-    textarea.value = `Write a comprehensive and objective overview of this content: \n\n Part ${part} of ${filename}: ${text} \n\n WRITE A COMPREHENSIVE AND OBJECTIVE OVERVIEW OF THIS CONTENT.`;
+    textarea.value = `Create VIDEO SUMMARY:\n\nTranscript Part: ${part} of ${filename}: ${text} \n\nCreate a VIDEO SUMMARY from the Transcript above following the flow of the conversation:`;
     textarea.dispatchEvent(enterKeyEvent);
 }
 
@@ -119,4 +119,4 @@ const intervalId = setInterval(() => {
         // Insert the chunk size label and input before the target element
         targetElement.parentNode.insertBefore(chunkSizeLabel, targetElement);
     }
-}, 5000);
+}, 2000);
