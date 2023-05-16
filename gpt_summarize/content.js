@@ -95,24 +95,20 @@ function initializeExtension() {
         fileInput.click();
     });
 
-    const observer = new MutationObserver((mutationsList) => {
-        mutationsList.forEach((mutation) => {
-            if (mutation.type !== 'childList') return;
+    const observer = new MutationObserver(() => {
+        const textBoxContainer = document.querySelector(
+            "textarea[tabindex='0']"
+        )?.parentElement;
 
-            const gptTextBox = document.querySelector(
-                '.flex.flex-col.w-full.py-2.flex-grow.md\\:py-3.md\\:pl-4'
-            );
-            const existingSubmitButton =
-                gptTextBox?.parentNode?.querySelector('.submit-button');
-            if (gptTextBox && !existingSubmitButton) {
-                gptTextBox.parentNode.insertBefore(submitButton, gptTextBox);
-                gptTextBox.parentNode.insertBefore(
-                    progressContainer,
-                    gptTextBox
-                );
-                gptTextBox.parentNode.insertBefore(chunkSizeLabel, gptTextBox);
-            }
-        });
+        const responseContainer = textBoxContainer?.parentNode;
+
+        const submitBtn = responseContainer?.querySelector('.submit-button');
+
+        if (textBoxContainer && !submitBtn) {
+            responseContainer.insertBefore(submitButton, textBoxContainer);
+            responseContainer.insertBefore(progressContainer, textBoxContainer);
+            responseContainer.insertBefore(chunkSizeLabel, textBoxContainer);
+        }
     });
     observer.observe(document.body, { childList: true, subtree: true });
 }
