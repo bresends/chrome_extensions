@@ -6,18 +6,75 @@ function createElement(tag, attributes = {}) {
     return element;
 }
 
-function createProgressBar() {
+async function submitConversation(text, chunkNumber, startPrompt, endPrompt) {
+    const textarea = document.querySelector("textarea[tabindex='0']");
+    const enterKeyEvent = new KeyboardEvent('keydown', {
+        bubbles: true,
+        cancelable: true,
+        keyCode: 13,
+    });
+    textarea.value = `${startPrompt}\n\nTranscript Part: ${chunkNumber}: ${text}\n\n${endPrompt}`;
+    textarea.dispatchEvent(enterKeyEvent);
+}
+
+async function handleChunkInput(
+    progressBar,
+    chunkSizeInput,
+    startPromptInput,
+    endPromptInput
+) {
+    function isChatGptReady() {
+        return !document.querySelector('.text-2xl > span:not(.invisible)');
+    }
+
+    progressBar.style.width = '0%';
+    progressBar.style.backgroundColor = '#32a9db';
+
+    const textarea = document.querySelector("textarea[tabindex='0']");
+    const text = textarea?.value;
+
+    const startPrompt = startPromptInput.value;
+    const endPrompt = endPromptInput.value;
+
+    const chunkSize = parseInt(chunkSizeInput.value);
+    const numChunks = Math.ceil(text.length / chunkSize);
+
+    for (let i = 0; i < numChunks; i++) {
+        const chunk = text.slice(i * chunkSize, (i + 1) * chunkSize);
+        await submitConversation(chunk, i + 1, startPrompt, endPrompt);
+        progressBar.style.width = `${((i + 1) / numChunks) * 100}%`;
+
+        while (!isChatGptReady()) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+    }
+
+    progressBar.style.backgroundColor = '#32a9db';
+}
+
+function createAndInsertElements(elements) {
+    const textBoxContainer = document.querySelector(
+        "textarea[tabindex='0']"
+    )?.parentElement;
+
+    const responseContainer = textBoxContainer?.parentNode;
+
+    const submitBtn = responseContainer?.querySelector('.submit-button');
+
+    if (textBoxContainer && !submitBtn) {
+        elements.forEach((element) => {
+            responseContainer.insertBefore(element.element, textBoxContainer);
+        });
+    }
+}
+
+function insertElementsToDom(createAndInsertElements) {
     const progressBar = createElement('div', {
         className: 'progress-bar',
     });
     const progressContainer = createElement('div', {
         className: 'progress-container',
     });
-    progressContainer.appendChild(progressBar);
-    return { progressBar, progressContainer };
-}
-
-function createChunkSizeInput() {
     const chunkSizeInput = createElement('input', {
         type: 'number',
         min: '1',
@@ -29,82 +86,72 @@ function createChunkSizeInput() {
         className: 'chunk-size-label',
     });
     chunkSizeLabel.appendChild(chunkSizeInput);
-    return { chunkSizeInput, chunkSizeLabel };
-}
 
-async function submitConversation(text, part) {
-    const textarea = document.querySelector("textarea[tabindex='0']");
-    const enterKeyEvent = new KeyboardEvent('keydown', {
-        bubbles: true,
-        cancelable: true,
-        keyCode: 13,
+    const promptContainer = createElement('div', {
+        className: 'flex justify-between py-2 gap-3',
     });
-    textarea.value = `VIDEO SUMMARY:\n\nTranscript Part: ${part}: ${text}`;
-    textarea.dispatchEvent(enterKeyEvent);
-}
 
-async function handleChunkInput(progressBar, chunkSizeInput) {
-    function isChatGptReady() {
-        return !document.querySelector('.text-2xl > span:not(.invisible)');
-    }
+    const startPromptInput = createElement('input', {
+        type: 'text',
+        className:
+            'focus:ring-0 focus-visible:ring-0 py-2 border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]',
+        value: 'VIDEO SUMMARY:',
+    });
 
-    progressBar.style.width = '0%';
-    progressBar.style.backgroundColor = '#32a9db';
+    const startPromptLabel = createElement('label', {
+        innerText: 'Start Prompt: ',
+        className: 'prompt-label w-full flex flex-col',
+    });
 
-    const textarea = document.querySelector("textarea[tabindex='0']");
-    const text = textarea?.value;
+    const endPromptInput = createElement('input', {
+        type: 'text',
+        className:
+            'focus:ring-0 focus-visible:ring-0 py-2 border border-black/10 bg-white dark:border-gray-900/50 dark:text-white dark:bg-gray-700 rounded-md shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]',
+        value: 'VIDEO SUMMARY:',
+    });
 
-    const chunkSize = parseInt(chunkSizeInput.value);
-    const numChunks = Math.ceil(text.length / chunkSize);
+    const endPromptLabel = createElement('label', {
+        innerText: 'End Prompt: ',
+        className: 'prompt-label w-full flex flex-col',
+    });
 
-    for (let i = 0; i < numChunks; i++) {
-        const chunk = text.slice(i * chunkSize, (i + 1) * chunkSize);
-        await submitConversation(chunk, i + 1);
-        progressBar.style.width = `${((i + 1) / numChunks) * 100}%`;
+    startPromptLabel.appendChild(startPromptInput);
+    endPromptLabel.appendChild(endPromptInput);
 
-        while (!isChatGptReady()) {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-    }
-
-    progressBar.style.backgroundColor = '#32a9db';
-}
-
-function insertElementsToDom(progressContainer, chunkSizeLabel, submitButton) {
-    const textBoxContainer = document.querySelector(
-        "textarea[tabindex='0']"
-    )?.parentElement;
-
-    const responseContainer = textBoxContainer?.parentNode;
-
-    const submitBtn = responseContainer?.querySelector('.submit-button');
-
-    if (textBoxContainer && !submitBtn) {
-        responseContainer.insertBefore(submitButton, textBoxContainer);
-        responseContainer.insertBefore(progressContainer, textBoxContainer);
-        responseContainer.insertBefore(chunkSizeLabel, textBoxContainer);
-    }
-}
-
-// Module: Main
-function initializeExtension(handleChunkInput) {
-    const { progressBar, progressContainer } = createProgressBar();
-    const { chunkSizeInput, chunkSizeLabel } = createChunkSizeInput();
+    promptContainer.appendChild(startPromptLabel);
+    promptContainer.appendChild(endPromptLabel);
 
     const submitButton = createElement('button', {
         innerText: 'Submit Long Text',
-        className: 'submit-button',
+        className: 'submit-button py-2 my-2',
     });
 
     submitButton.addEventListener('click', () => {
-        handleChunkInput(progressBar, chunkSizeInput);
+        handleChunkInput(
+            progressBar,
+            chunkSizeInput,
+            startPromptInput,
+            endPromptInput
+        );
     });
 
+    const elements = [
+        { element: promptContainer, position: 'before' },
+        { element: submitButton, position: 'before' },
+        { element: progressContainer, position: 'before' },
+        { element: chunkSizeLabel, position: 'before' },
+    ];
+
+    createAndInsertElements(elements);
+}
+
+// Module: Main
+function initializeExtension() {
     const observer = new MutationObserver(() =>
-        insertElementsToDom(progressContainer, chunkSizeLabel, submitButton)
+        insertElementsToDom(createAndInsertElements)
     );
     observer.observe(document.body, { childList: true, subtree: true });
 }
 
 // Initialize the extension
-initializeExtension(handleChunkInput);
+initializeExtension();
