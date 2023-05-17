@@ -43,42 +43,53 @@ async function submitConversation(text, part) {
     textarea.dispatchEvent(enterKeyEvent);
 }
 
-function isChatGptReady() {
-    return !document.querySelector('.text-2xl > span:not(.invisible)');
+async function handleChunkInput(progressBar, chunkSizeInput) {
+    function isChatGptReady() {
+        return !document.querySelector('.text-2xl > span:not(.invisible)');
+    }
+
+    progressBar.style.width = '0%';
+    progressBar.style.backgroundColor = '#32a9db';
+
+    const textarea = document.querySelector("textarea[tabindex='0']");
+    const text = textarea?.value;
+
+    const chunkSize = parseInt(chunkSizeInput.value);
+    const numChunks = Math.ceil(text.length / chunkSize);
+
+    for (let i = 0; i < numChunks; i++) {
+        const chunk = text.slice(i * chunkSize, (i + 1) * chunkSize);
+        await submitConversation(chunk, i + 1);
+        progressBar.style.width = `${((i + 1) / numChunks) * 100}%`;
+
+        while (!isChatGptReady()) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+    }
+
+    progressBar.style.backgroundColor = '#32a9db';
 }
 
+function insertElementsToDom(progressContainer, chunkSizeLabel, submitButton) {
+    const textBoxContainer = document.querySelector(
+        "textarea[tabindex='0']"
+    )?.parentElement;
 
+    const responseContainer = textBoxContainer?.parentNode;
+
+    const submitBtn = responseContainer?.querySelector('.submit-button');
+
+    if (textBoxContainer && !submitBtn) {
+        responseContainer.insertBefore(submitButton, textBoxContainer);
+        responseContainer.insertBefore(progressContainer, textBoxContainer);
+        responseContainer.insertBefore(chunkSizeLabel, textBoxContainer);
+    }
+}
 
 // Module: Main
-function initializeExtension() {
+function initializeExtension(handleChunkInput) {
     const { progressBar, progressContainer } = createProgressBar();
     const { chunkSizeInput, chunkSizeLabel } = createChunkSizeInput();
-
-    const handleFileChange = async () => {
-        progressBar.style.width = '0%';
-        progressBar.style.backgroundColor = '#32a9db';
-
-        const textarea = document.querySelector("textarea[tabindex='0']");
-
-        const text = textarea?.value;
-
-        const chunkSize = parseInt(chunkSizeInput.value);
-        const numChunks = Math.ceil(text.length / chunkSize);
-
-        for (let i = 0; i < numChunks; i++) {
-            const chunk = text.slice(i * chunkSize, (i + 1) * chunkSize);
-            await submitConversation(chunk, i + 1);
-            progressBar.style.width = `${((i + 1) / numChunks) * 100}%`;
-
-            while (!isChatGptReady()) {
-                await new Promise((resolve) => setTimeout(resolve, 1000));
-            }
-        }
-
-        progressBar.style.backgroundColor = '#32a9db';
-    };
-
-    // const fileInput = createFileInput(handleFileChange);
 
     const submitButton = createElement('button', {
         innerText: 'Submit Long Text',
@@ -86,26 +97,14 @@ function initializeExtension() {
     });
 
     submitButton.addEventListener('click', () => {
-        handleFileChange();
+        handleChunkInput(progressBar, chunkSizeInput);
     });
 
-    const observer = new MutationObserver(() => {
-        const textBoxContainer = document.querySelector(
-            "textarea[tabindex='0']"
-        )?.parentElement;
-
-        const responseContainer = textBoxContainer?.parentNode;
-
-        const submitBtn = responseContainer?.querySelector('.submit-button');
-
-        if (textBoxContainer && !submitBtn) {
-            responseContainer.insertBefore(submitButton, textBoxContainer);
-            responseContainer.insertBefore(progressContainer, textBoxContainer);
-            responseContainer.insertBefore(chunkSizeLabel, textBoxContainer);
-        }
-    });
+    const observer = new MutationObserver(() =>
+        insertElementsToDom(progressContainer, chunkSizeLabel, submitButton)
+    );
     observer.observe(document.body, { childList: true, subtree: true });
 }
 
 // Initialize the extension
-initializeExtension();
+initializeExtension(handleChunkInput);
