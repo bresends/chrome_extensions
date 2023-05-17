@@ -79,7 +79,7 @@ function initializeExtension() {
     // const fileInput = createFileInput(handleFileChange);
 
     const submitButton = createElement('button', {
-        innerText: 'Submit File',
+        innerText: 'Submit Long Text',
         className: 'submit-button',
     });
 
