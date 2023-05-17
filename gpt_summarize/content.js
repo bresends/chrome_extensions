@@ -6,15 +6,6 @@ function createElement(tag, attributes = {}) {
     return element;
 }
 
-function createFileInput(onChange) {
-    const input = createElement('input', {
-        type: 'file',
-        accept: '.txt,.js,.py,.html,.css,.json,.csv',
-    });
-    input.addEventListener('change', onChange);
-    return input;
-}
-
 function createProgressBar() {
     const progressBar = createElement('div', {
         className: 'progress-bar',
@@ -41,14 +32,14 @@ function createChunkSizeInput() {
     return { chunkSizeInput, chunkSizeLabel };
 }
 
-async function submitConversation(text, part, filename) {
+async function submitConversation(text, part) {
     const textarea = document.querySelector("textarea[tabindex='0']");
     const enterKeyEvent = new KeyboardEvent('keydown', {
         bubbles: true,
         cancelable: true,
         keyCode: 13,
     });
-    textarea.value = `Create VIDEO SUMMARY:\n\nTranscript Part: ${part} of ${filename}: ${text} \n\nCreate a VIDEO SUMMARY from the Transcript above following the flow of the conversation:`;
+    textarea.value = `Create VIDEO SUMMARY:\n\nTranscript Part: ${part}: ${text} \n\nCreate a VIDEO SUMMARY from the Transcript above following the flow of the conversation:`;
     textarea.dispatchEvent(enterKeyEvent);
 }
 
@@ -65,15 +56,16 @@ function initializeExtension() {
         progressBar.style.width = '0%';
         progressBar.style.backgroundColor = '#32a9db';
 
-        const file = fileInput.files[0];
-        const text = await file.text();
+        const textarea = document.querySelector("textarea[tabindex='0']");
+
+        const text = textarea?.value;
 
         const chunkSize = parseInt(chunkSizeInput.value);
         const numChunks = Math.ceil(text.length / chunkSize);
 
         for (let i = 0; i < numChunks; i++) {
             const chunk = text.slice(i * chunkSize, (i + 1) * chunkSize);
-            await submitConversation(chunk, i + 1, file.name);
+            await submitConversation(chunk, i + 1);
             progressBar.style.width = `${((i + 1) / numChunks) * 100}%`;
 
             while (!isChatGptReady()) {
@@ -84,7 +76,7 @@ function initializeExtension() {
         progressBar.style.backgroundColor = '#32a9db';
     };
 
-    const fileInput = createFileInput(handleFileChange);
+    // const fileInput = createFileInput(handleFileChange);
 
     const submitButton = createElement('button', {
         innerText: 'Submit File',
@@ -92,7 +84,7 @@ function initializeExtension() {
     });
 
     submitButton.addEventListener('click', () => {
-        fileInput.click();
+        handleFileChange();
     });
 
     const observer = new MutationObserver(() => {
