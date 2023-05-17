@@ -39,13 +39,15 @@ async function submitConversation(text, part) {
         cancelable: true,
         keyCode: 13,
     });
-    textarea.value = `Create VIDEO SUMMARY:\n\nTranscript Part: ${part}: ${text} \n\nCreate a VIDEO SUMMARY from the Transcript above following the flow of the conversation:`;
+    textarea.value = `VIDEO SUMMARY:\n\nTranscript Part: ${part}: ${text}`;
     textarea.dispatchEvent(enterKeyEvent);
 }
 
 function isChatGptReady() {
     return !document.querySelector('.text-2xl > span:not(.invisible)');
 }
+
+
 
 // Module: Main
 function initializeExtension() {
