@@ -27,9 +27,6 @@ async function handleChunkInput(
         return !document.querySelector('.text-2xl > span:not(.invisible)');
     }
 
-    progressBar.style.width = '0%';
-    progressBar.style.backgroundColor = '#32a9db';
-
     const textarea = document.querySelector("textarea[tabindex='0']");
     const text = textarea?.value;
 
@@ -75,6 +72,8 @@ function insertElementsToDom(createAndInsertElements) {
     const progressContainer = createElement('div', {
         className: 'progress-container',
     });
+    progressContainer.appendChild(progressBar);
+
     const chunkSizeInput = createElement('input', {
         type: 'number',
         min: '1',

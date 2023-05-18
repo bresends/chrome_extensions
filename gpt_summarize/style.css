@@ -12,16 +12,18 @@
 
 .progress-container {
     width: 99%;
-    height: 5px;
+    height: .25rem;
     background-color: grey;
     margin: 3px;
-    border-radius: 5px;
+    border-radius: 2px;
 }
 
 .progress-bar {
     width: 0%;
-    height: 100%;
-    background-color: #32a9db;
+    height: 0.25rem;
+    border-radius: 2px;
+    background: #32a9db;
+    transition: width 0.5s ease-in-out;
 }
 
 .chunk-size-input {
