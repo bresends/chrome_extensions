@@ -1,3 +1,5 @@
+let isRunning = false;
+
 function createElement(tag, attributes = {}) {
     const element = document.createElement(tag);
     Object.entries(attributes).forEach(([key, value]) => {
@@ -41,6 +43,9 @@ async function handleChunkInput(
     const numChunks = Math.ceil(text.length / chunkSize);
 
     for (let i = 0; i < numChunks; i++) {
+        if (!isRunning) {
+            break;
+        }
         const chunk = text.slice(i * chunkSize, (i + 1) * chunkSize);
         await submitConversation(chunk, i + 1, startPrompt, endPrompt);
         progressBar.style.width = `${((i + 1) / numChunks) * 100}%`;
@@ -51,7 +56,7 @@ async function handleChunkInput(
     }
 }
 
-function createAndInsertElements(elements) {
+function insertToTexBoxContainer(elements) {
     const textBoxContainer = document.querySelector(
         "textarea[tabindex='0']"
     )?.parentElement;
@@ -67,7 +72,7 @@ function createAndInsertElements(elements) {
     }
 }
 
-function insertElementsToDom(createAndInsertElements) {
+function insertElementsToDom(insertToTexBoxContainer) {
     const progressBar = createElement('div', {
         className: 'progress-bar',
     });
@@ -128,12 +133,23 @@ function insertElementsToDom(createAndInsertElements) {
     });
 
     submitButton.addEventListener('click', () => {
-        handleChunkInput(
-            progressBar,
-            chunkSizeInput,
-            startPromptInput,
-            endPromptInput
-        );
+        isRunning = !isRunning;
+
+        if (isRunning) {
+            submitButton.innerText = 'Stop Execution';
+            submitButton.style.backgroundColor = '#ef4146';
+
+            handleChunkInput(
+                progressBar,
+                chunkSizeInput,
+                startPromptInput,
+                endPromptInput
+            );
+        } else {
+            submitButton.innerText = 'Submit Long Text';
+            submitButton.style.backgroundColor = '#4d8b31';
+            progressBar.style.width = '0%';
+        }
     });
 
     const elements = [
@@ -143,13 +159,13 @@ function insertElementsToDom(createAndInsertElements) {
         { element: chunkSizeLabel, position: 'before' },
     ];
 
-    createAndInsertElements(elements);
+    insertToTexBoxContainer(elements);
 }
 
 // Module: Main
 function initializeExtension() {
     const observer = new MutationObserver(() =>
-        insertElementsToDom(createAndInsertElements)
+        insertElementsToDom(insertToTexBoxContainer)
     );
     observer.observe(document.body, { childList: true, subtree: true });
 }
