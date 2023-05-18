@@ -10,9 +10,14 @@
     margin: 3px;
 }
 
+#open-close-btn {
+    right: 2rem;
+    bottom: 6px;
+}
+
 .progress-container {
     width: 99%;
-    height: .25rem;
+    height: 0.25rem;
     background-color: grey;
     margin: 3px;
     border-radius: 2px;
