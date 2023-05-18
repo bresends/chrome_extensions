@@ -45,8 +45,6 @@ async function handleChunkInput(
             await new Promise((resolve) => setTimeout(resolve, 1000));
         }
     }
-
-    progressBar.style.backgroundColor = '#32a9db';
 }
 
 function createAndInsertElements(elements) {
