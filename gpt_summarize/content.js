@@ -24,7 +24,11 @@ async function handleChunkInput(
     endPromptInput
 ) {
     function isChatGptReady() {
-        return !document.querySelector('.text-2xl > span:not(.invisible)');
+        // If not present, the GPT can be assumed to be ready
+        const gptIsProcessingSVG = document.querySelector(
+            '.text-2xl > span:not(.invisible)'
+        );
+        return !gptIsProcessingSVG;
     }
 
     const textarea = document.querySelector("textarea[tabindex='0']");
